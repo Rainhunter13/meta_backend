@@ -2,10 +2,11 @@
 
 import os
 import django
+from datetime import date
 from django.test import TestCase
 
 from therapists_profiles.services.airtable_services import AirtableService
-from therapists_profiles.models import Therapist
+from therapists_profiles.models import SyncRecord, Therapist
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "meta_fullstack.settings")
 django.setup()
@@ -39,3 +40,4 @@ class AirtableServiceTestCase(TestCase):
         airtable_service = AirtableService('Test_Table')
         airtable_service.sync_airtable_with_postgres()
         self.assertEqual(Therapist.objects.first().name, 'Test_Name')
+        self.assertEqual(SyncRecord.objects.last().date, date.today())

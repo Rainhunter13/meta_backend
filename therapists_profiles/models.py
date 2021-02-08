@@ -14,7 +14,7 @@ class Therapist(models.Model):
     airtable_id = models.CharField(max_length=100, default=None)
     name = models.CharField(default=None, null=True, max_length=100)
     photo_url = models.CharField(default=None, null=True, max_length=100)
-    therapist = models.ManyToManyField(SyncRecord, related_name='updated_therapists')
+    sync_record = models.ManyToManyField(SyncRecord, related_name='updated_therapists')
 
 
 class Method(models.Model):
