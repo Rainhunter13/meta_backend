@@ -13,7 +13,7 @@ class Therapist(models.Model):
     """Model for keeping therapists information"""
     airtable_id = models.CharField(max_length=100, default=None)
     name = models.CharField(default=None, null=True, max_length=100)
-    photo_url = models.CharField(default=None, null=True, max_length=100)
+    photo_url = models.CharField(default=None, null=True, max_length=200)
     sync_record = models.ManyToManyField(SyncRecord, related_name='updated_therapists')
 
 
