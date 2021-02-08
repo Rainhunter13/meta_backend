@@ -14,4 +14,4 @@ class Therapist(models.Model):
 class Method(models.Model):
     """Model for keeping methods related to therapists"""
     name = models.CharField(max_length=100, default=None)
-    therapist = models.ManyToManyField(Therapist, related_name='methods', null=True)
+    therapist = models.ManyToManyField(Therapist, related_name='methods')
