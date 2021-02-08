@@ -1,8 +1,8 @@
 """therapists_profiles app tests"""
 
+from datetime import date
 import os
 import django
-from datetime import date
 from django.test import TestCase
 
 from therapists_profiles.services.airtable_services import AirtableService

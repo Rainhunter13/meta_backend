@@ -1,7 +1,7 @@
 """Services for working with data from airtable"""
 
-from airtable import Airtable
 from datetime import date
+from airtable import Airtable
 
 from configurations.config import base_key, api_key
 from therapists_profiles.models import SyncRecord, Therapist, Method
@@ -36,8 +36,8 @@ class AirtableService:
         return therapists_dicts
 
     def sync_airtable_with_postgres(self):
-        """Make changes in PostgreSQL database so that therapist list is same as in Airtable and adds respective
-        synchronize record """
+        """Make changes in PostgreSQL database so that therapist list is
+        same as in Airtable and adds respective synchronize record """
         therapists_dicts = self.get_therapists_from_airtable()
         airtable_ids = set()
 
