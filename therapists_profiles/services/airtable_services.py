@@ -5,42 +5,49 @@ from configurations.config import base_key, api_key
 from therapists_profiles.models import Therapist, Method
 
 
-def authenticate_airtable(table_name):
-    airtable = Airtable(base_key=base_key, table_name=table_name, api_key=api_key)
-    return airtable
+class AirtableService:
+    """"""
+    table_name = ""
 
+    def __init__(self, table_name):
+        """Defines Airtable table name"""
+        self.table_name = table_name
 
-def get_therapists_from_airtable(table_name):
-    """Returns a list of therapists in the airtable"""
-    airtable = authenticate_airtable(table_name)
+    def authenticate_airtable(self):
+        """Authenticate Airtable table"""
+        airtable = Airtable(base_key=base_key, table_name=self.table_name, api_key=api_key)
+        return airtable
 
-    therapists_dicts = []
-    for airtable_therapist in airtable.get_all():
-        therapists_dicts.append({
-            'airtable_id': airtable_therapist['id'],
-            'name': airtable_therapist['fields']['Имя'],
-            'photo_url': airtable_therapist['fields']['Фотография'][0]['url'],
-            'methods': airtable_therapist['fields']['Методы']
-        })
+    def get_therapists_from_airtable(self):
+        """Returns a list of therapists in the airtable"""
+        airtable = self.authenticate_airtable()
 
-    return therapists_dicts
+        therapists_dicts = []
+        for airtable_therapist in airtable.get_all():
+            therapists_dicts.append({
+                'airtable_id': airtable_therapist['id'],
+                'name': airtable_therapist['fields']['Имя'],
+                'photo_url': airtable_therapist['fields']['Фотография'][0]['url'],
+                'methods': airtable_therapist['fields']['Методы']
+            })
 
+        return therapists_dicts
 
-def sync_airtable_with_postgres(table_name):
-    """Make changes in PostgreSQL database so that therapist list is same as in Airtable"""
-    therapists_dicts = get_therapists_from_airtable(table_name)
-    airtable_ids = set()
+    def sync_airtable_with_postgres(self):
+        """Make changes in PostgreSQL database so that therapist list is same as in Airtable"""
+        therapists_dicts = self.get_therapists_from_airtable()
+        airtable_ids = set()
 
-    for therapist_dict in therapists_dicts:
-        airtable_ids.add(therapist_dict['airtable_id'])
-        if not Therapist.objects.filter(airtable_id=therapist_dict['airtable_id']):
-            add_therapist_to_postgres(therapist_dict)
-        else:
-            update_therapist_in_postgres(therapist_dict)
+        for therapist_dict in therapists_dicts:
+            airtable_ids.add(therapist_dict['airtable_id'])
+            if not Therapist.objects.filter(airtable_id=therapist_dict['airtable_id']):
+                add_therapist_to_postgres(therapist_dict)
+            else:
+                update_therapist_in_postgres(therapist_dict)
 
-    for therapist in Therapist.objects.all():
-        if therapist.airtable_id not in airtable_ids:
-            therapist.delete()
+        for therapist in Therapist.objects.all():
+            if therapist.airtable_id not in airtable_ids:
+                therapist.delete()
 
 
 def add_therapist_to_postgres(therapist_dict):

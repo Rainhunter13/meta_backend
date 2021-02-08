@@ -4,8 +4,7 @@ import os
 import django
 from django.test import TestCase
 
-from therapists_profiles.services.airtable_services import get_therapists_from_airtable
-from therapists_profiles.services.airtable_services import sync_airtable_with_postgres
+from therapists_profiles.services.airtable_services import AirtableService
 from therapists_profiles.models import Therapist
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "meta_fullstack.settings")
@@ -26,15 +25,17 @@ def clear_test_table(airtable):
         airtable.delete(record['id'])
 
 
-class AirtableTestCase(TestCase):
+class AirtableServiceTestCase(TestCase):
     """Class for testing airtable services"""
 
     def test_get_therapists_from_airtable(self):
         """Test for get_therapists_from_airtable()"""
-        airtable_therapists = get_therapists_from_airtable('Test_Table')
+        airtable_service = AirtableService('Test_Table')
+        airtable_therapists = airtable_service.get_therapists_from_airtable()
         self.assertEqual(airtable_therapists[0]['name'], 'Test_Name')
 
     def test_sync_airtable_with_postgres(self):
         """Test for sync_airtable_with_postgres()"""
-        sync_airtable_with_postgres('Test_Table')
+        airtable_service = AirtableService('Test_Table')
+        airtable_service.sync_airtable_with_postgres()
         self.assertEqual(Therapist.objects.first().name, 'Test_Name')
