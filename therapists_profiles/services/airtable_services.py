@@ -81,6 +81,7 @@ def update_therapist_in_postgres(therapist_dict, sync_record):
     old_therapist = Therapist.objects.get(airtable_id=therapist_dict['airtable_id'])
     old_therapist.name = therapist_dict['name']
     old_therapist.photo_url = therapist_dict['photo_url']
+    old_therapist.save()
     old_therapist.sync_record.add(sync_record)
 
     for method_name in therapist_dict['methods']:
